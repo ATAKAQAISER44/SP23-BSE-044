@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD with ReqRes API</title>
+    <link rel="stylesheet" href="apistyle.css">
+</head>
+<body>
+    <div style="display: flex; justify-content: center; align-content: center; ">
+        <h1>CRUD OPERATIONS WITH API</h1>
+    </div>
+    
+
+    <div style="display: flex; justify-content:center; align-content: center; gap: 15px;">
+
+        <section>
+            <h2>Create User</h2>
+            <form id="createUserForm">
+                <input type="text" id="createName" placeholder="Name" required>
+                <br>
+                <br>
+                <input type="text" id="createJob" placeholder="Email" required>
+                <br>
+                <br>
+                <button type="submit">Create User</button>
+            </form>
+        </section>
+    
+        <section>
+            <h2>Users List</h2>
+            <ul id="usersList" style="width: 428px;"></ul>
+        </section>
+    
+        <section>
+            <h2>Update User</h2>
+            <form id="updateUserForm">
+                <input type="number" id="updateId" placeholder="User ID" required>
+                <br>
+                <br>
+                <input type="text" id="updateName" placeholder="Updated Name" required>
+                <br>
+                <br>
+                <input type="text" id="updateJob" placeholder="Updated Email" required>
+                <br>
+                <br>
+                <button type="submit">Update User</button>
+            </form>
+        </section>
+    
+        <section>
+            <div>
+                <h2>Delete User</h2>
+                <form id="deleteUserForm">
+                    <input type="number" id="deleteId" placeholder="User ID" required>
+                    <br>
+                    <br>
+                    
+                    <button type="submit">Delete User</button>
+                </form>
+            </div>
+        </section>
+    
+
+    </div>
+    
+ 
+    <script src="api.js"></script>
+</body>
+</html>

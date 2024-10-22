@@ -1,0 +1,39 @@
+body {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+
+
+}
+
+#maindiv{
+    display: flex;
+    justify-content: center;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+input, button {
+    padding: 10px;
+    margin: 5px;
+}
+
+ul {
+    list-style-type: none;
+}
+button{
+    background-color:blue;
+    color: white;
+    border: none;
+    border-radius:2%;
+}
+
+
+
