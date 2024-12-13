@@ -1,19 +1,17 @@
 const express = require("express");
-let app = express();
+const app = express();
+var expressLayouts = require("express-ejs-layouts");
+
+const PORT = 4000;
 
 app.use(express.static("public"));
-
-
 app.set("view engine", "ejs");
+app.use(expressLayouts);
 
-app.get("/cv", (req, res) => {
-  res.render('cv'); 
+app.get("/", (req, res) => {
+    res.render("index");
 });
 
-app.get("/j", (req, res) => { 
-  res.render('website');
-});
-
-app.listen(2000, () => {
-  console.log("Server started at localhost:2000"); 
+app.listen(PORT, () => {
+    console.log(`Server is running at port: ${PORT}`);
 });
