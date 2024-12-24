@@ -127,6 +127,7 @@ router.get("/checkout/success", (req, res) => {
 });
 
 
+
   
 router.post("/checkout/submit", authenticateAccessToken, async (req, res) => {
   if (!req.session.cart || req.session.cart.length === 0) {

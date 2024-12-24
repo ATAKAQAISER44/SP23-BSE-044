@@ -1,0 +1,105 @@
+<div class="mx-4">
+    <!-- Create New Category Button -->
+    <a href="/admin/create-category" class="btn create-category-btn mb-3">Create New Category</a>
+
+    <!-- Category Table -->
+    <table class="table custom-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Number of Items</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for( let index = 0; index < categories.length; index++ ) { %>
+                <tr>
+                    <td><%= categories[index].title %></td>
+                    <td><%= categories[index].description %></td>
+                    <td><%= categories[index].numberOfItems %></td>
+                    <td>
+                        <a href="/admin/categories/edit/<%= categories[index]._id %>" class="btn action-btn edit-btn">Edit</a>
+                        <a href="/admin/categories/delete/<%= categories[index]._id %>" class="btn action-btn delete-btn">Delete</a>
+                    </td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+</div>
+
+<style>
+/* Create New Category Button */
+.create-category-btn {
+    background-color: #4CAF50; /* Green color */
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.create-category-btn:hover {
+    background-color: #45a049; /* Darker green */
+}
+
+/* Custom Table Styling */
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.custom-table th, .custom-table td {
+    padding: 12px;
+    text-align: left;
+    font-size: 14px;
+    color: #333;
+}
+
+.custom-table th {
+    background-color: #333;
+    color: white;
+    font-weight: bold;
+}
+
+.custom-table tr:nth-child(even) {
+    background-color: #f1f1f1; /* Light grey for even rows */
+}
+
+.custom-table tr:hover {
+    background-color: #f4f4f4; /* Light hover effect */
+}
+
+/* Action Buttons (Edit and Delete) */
+.action-btn {
+    padding: 8px 15px;
+    font-size: 14px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-right: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.edit-btn {
+    background-color: #ffc107; /* Yellow */
+    color: black;
+}
+
+.edit-btn:hover {
+    background-color: #e0a800; /* Darker yellow on hover */
+}
+
+.delete-btn {
+    background-color: #dc3545; /* Red */
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+</style>

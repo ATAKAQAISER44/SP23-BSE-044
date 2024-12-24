@@ -1,97 +1,81 @@
-
-const Product = require('../../models/product');
-const mongoose = require('mongoose');
 const express = require("express");
-const Order = require('../../models/Order');
-
+const Wishlist = require('../../models/wishlist');
+const Product = require('../../models/product');
 const { authenticateAccessToken } = require('../../middleware/auth');
-let router = express.Router();
 
-// Add to whislist
+const router = express.Router();
+
+// Add to wishlist
 router.post("/add-to-wishlist/:productId", authenticateAccessToken, async (req, res) => {
-    const productId = req.params.productId;
-    const userId = req.user.id; // Assuming `authenticateAccessToken` sets `req.user`
-  
-    try {
-      const product = await Product.findById(productId);
-      if (!product) {
-        req.flash("error", "Product not found.");
-        return res.redirect("/products");
-      }
-  
-      // Initialize the wishlist if it doesn't exist
-      if (!req.session.wishlist) {
-        req.session.wishlist = [];
-      }
-  
-      // Check if the product is already in the wishlist for this user
-      const productInWishlistIndex = req.session.wishlist.findIndex(
-        item => item.productId.toString() === product._id.toString() && item.userId === userId
-      );
-  
-      if (productInWishlistIndex >= 0) {
-        req.flash("info", `${product.title} is already in your wishlist.`);
-      } else {
-        // Add the product to the wishlist
-        req.session.wishlist.push({
-          userId: userId, // Store the user ID with the wishlist item
-          productId: product._id,
-          title: product.title,
-          price: product.price,
-          image: product.image,
-        });
-  
-        req.flash("success", `${product.title} added to wishlist.`);
-      }
-  
-      // Save the updated session
-      req.session.save(err => {
-        if (err) {
-          console.error("Error saving session:", err);
-          req.flash("error", "Could not update wishlist.");
-          return res.redirect("/products");
-        }
-  
-        res.redirect("/wishlistview");
-      });
-    } catch (error) {
-      console.error("Error adding product to wishlist:", error);
-      req.flash("error", "There was an error adding the product to the wishlist.");
-      res.redirect("/products");
-    }
-  });
-  
-
-
-  // Remove item from wishlist
-router.get("/wishlist/remove/:productId", authenticateAccessToken, (req, res) => {
   const productId = req.params.productId;
-  const userId = req.user.id; // Get the authenticated user's ID
+  const userId = req.user.id;
 
-  // Find the index of the item in the wishlist for this user
-  const index = req.session.wishlist.findIndex(
-    item => item.productId.toString() === productId && item.userId === userId
-  );
+  try {
+    const product = await Product.findById(productId);
+    if (!product) {
+      req.flash("error", "Product not found.");
+      return res.redirect("/products");
+    }
 
-  if (index !== -1) {
-    // Remove the item from the wishlist
-    req.session.wishlist.splice(index, 1);
+    // Check if the product is already in the wishlist for this user
+    const existingWishlistItem = await Wishlist.findOne({ userId, productId });
+    if (existingWishlistItem) {
+      req.flash("info", `${product.title} is already in your wishlist.`);
+      return res.redirect("/wishlistview");
+    }
 
-    req.session.save(err => {
-      if (err) {
-        console.error("Error saving session:", err);
-        req.flash("error", "Could not update wishlist.");
-        return res.redirect("/wishlistview");
-      }
+    // Add the product to the wishlist
+    const newWishlistItem = new Wishlist({ userId, productId });
+    await newWishlistItem.save();
 
-      req.flash("success", "Item removed from wishlist.");
-      res.redirect("/wishlistview"); // Redirect back to the wishlist page after removing the item
-    });
-  } else {
-    req.flash("error", "Item not found in your wishlist.");
+    req.flash("success", `${product.title} added to wishlist.`);
     res.redirect("/wishlistview");
+  } catch (error) {
+    console.error("Error adding product to wishlist:", error);
+    req.flash("error", "There was an error adding the product to the wishlist.");
+    res.redirect("/products");
   }
 });
 
+// View wishlist
+router.get("/wishlistview", authenticateAccessToken, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const wishlistItems = await Wishlist.find({ userId }).populate('productId');
+    const formattedWishlist = wishlistItems.map(item => ({
+      productId: item.productId._id,
+      title: item.productId.title,
+      price: item.productId.price,
+      image: item.productId.image,
+    }));
+
+    res.render("wish/wish", { wishlist: formattedWishlist });
+  } catch (error) {
+    console.error("Error fetching wishlist:", error);
+    req.flash("error", "Could not fetch wishlist.");
+    res.redirect("/products");
+  }
+});
+
+// Remove item from wishlist
+router.get("/wishlist/remove/:productId", authenticateAccessToken, async (req, res) => {
+  const productId = req.params.productId;
+  const userId = req.user.id;
+
+  try {
+    const result = await Wishlist.findOneAndDelete({ userId, productId });
+    if (result) {
+      req.flash("success", "Item removed from wishlist.");
+    } else {
+      req.flash("error", "Item not found in your wishlist.");
+    }
+    res.redirect("/wishlistview");
+  } catch (error) {
+    console.error("Error removing item from wishlist:", error);
+    req.flash("error", "Could not remove item from wishlist.");
+    res.redirect("/wishlistview");
+  }
+});
 
 module.exports = router;

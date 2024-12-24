@@ -1,0 +1,98 @@
+<style>
+    /* Apply styles only within the wishlist container */
+  #wishlist-page {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+  }
+  
+  #wishlist-page h2 {
+    text-align: center;
+    font-size: 24px;
+    margin-top: 30px;
+    color: #333;
+  }
+  
+  /* Wishlist List Styling */
+  #wishlist-page ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 20px auto;
+    max-width: 900px;
+  }
+  
+  #wishlist-page li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+  }
+  
+  #wishlist-page li img {
+    width: 50px;
+    height: auto;
+    border-radius: 5px;
+  }
+  
+  #wishlist-page li strong {
+    font-size: 18px;
+    color: #333;
+    margin-left: 15px;
+  }
+  
+  #wishlist-page li span {
+    font-size: 16px;
+    color: #777;
+    margin-left: 10px;
+  }
+  
+  #wishlist-page a {
+    color: #ff4d4d;
+    text-decoration: none;
+    font-size: 14px;
+    margin-left: 10px;
+    transition: color 0.3s ease;
+  }
+  
+  #wishlist-page a:hover {
+    color: #d10000;
+  }
+  
+  /* Empty wishlist message */
+  #wishlist-page p {
+    text-align: center;
+    font-size: 18px;
+    color: #777;
+    margin-top: 50px;
+  }
+  
+  </style>
+
+  
+  
+  <div id="wishlist-page">
+    <h2>Your Wishlist</h2>
+  
+    <% if (wishlist && wishlist.length > 0) { %>
+      <ul>
+        <% wishlist.forEach(item => { %>
+          <li>
+            <img src="<%= item.image %>" alt="<%= item.title %>" width="50">
+            <strong><%= item.title %></strong>
+            <span>Price: $<%= item.price %></span>
+            <a href="/wishlist/remove/<%= item.productId %>">Remove</a>
+          </li>
+        <% }); %>
+      </ul>
+    <% } else { %>
+      <p>Your wishlist is empty.</p>
+    <% } %>
+  </div>
+  
+  
+  
