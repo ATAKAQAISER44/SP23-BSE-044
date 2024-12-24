@@ -8,6 +8,8 @@ const flash = require('connect-flash');
 const Order = require('./models/Order');
 let Category=require("./models/category");
 
+const wishlistRoutes = require('./routes/wishlist/wishlist');
+
 const { checkAdminAccess, authenticateAccessToken } = require('./middleware/auth');
 
 
@@ -25,7 +27,6 @@ app.use(session({
 // Flash middleware
 app.use(flash());
 
-// Make flash messages available in templates (if using a templating engine like EJS)
 app.use((req, res, next) => {
     res.locals.messages = req.flash();
     next();
@@ -46,14 +47,15 @@ app.use(cookieParser());
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(layout);
+
+app.use(wishlistRoutes); // Adjust the base path as needed
+
 app.use("/uploads/products", express.static(path.join(__dirname, "uploads/products")));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to MongoDB'))
     .catch((err) => console.error('MongoDB connection error:', err));
-
-
 
 
 // Body parser
@@ -117,7 +119,6 @@ app.get("/admin/create", authenticateAccessToken,checkAdminAccess, (req, res) =>
 
 
 
-
 app.get("/admin/products/edit/:id", async (req, res) => {
   
   const product = await Product.findById(req.params.id);
@@ -161,65 +162,6 @@ app.get("/cart/cartview", authenticateAccessToken, (req, res) => {
 });
 
 
-
-
-app.get('/add-to-cart/:productId', authenticateAccessToken, async (req, res) => {
-  const productId = req.params.productId;
-  
-  try {
-      const product = await Product.findById(productId);
-
-      if (!product) {
-          return res.status(404).send("Product not found");
-      }
-
-      res.render('cart/addProduct', { product });
-  } catch (err) {
-      console.error(err);
-      res.status(500).send("Error fetching product");
-  }
-});
-
-
-// Pagination  
-
-// app.get('/products', async (req, res) => {
-//   try {
-//     // Get the current page from query parameters, default to page 1
-//     const page = parseInt(req.query.page) || 1;
-    
-//     // Set the number of products to display per page
-//     const perPage = 12;
-
-//     // Fetch paginated products from the database
-//     const products = await Product.find()
-//                                   .skip((page - 1) * perPage)  // Skip products for previous pages
-//                                   .limit(perPage);  // Limit products per page
-
-//     // Count the total number of products in the database for pagination
-//     const totalProducts = await Product.countDocuments();
-
-//     // Calculate the total number of pages
-//     const totalPages = Math.ceil(totalProducts / perPage);
-
-//     // Log products to check the _id values
-//     console.log(products);
-
-//     if (!products || products.length === 0) {
-//       return res.status(404).send("No products found");
-//     }
-
-//     // Render the 'AllProducts' view and pass products and pagination data
-//     res.render('cart/AllProducts', {
-//       products,
-//       currentPage: page,
-//       totalPages,
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send("Error fetching products");
-//   }
-// });
 
 
 app.get('/products', async (req, res) => {
@@ -278,6 +220,37 @@ app.get("/admin/orders", authenticateAccessToken, checkAdminAccess, async (req, 
       res.redirect("/admin/dashboard");
   }
 });
+
+app.get('/add-to-cart/:productId', authenticateAccessToken, async (req, res) => {
+  const productId = req.params.productId;
+  
+  try {
+      const product = await Product.findById(productId);
+
+      if (!product) {
+          return res.status(404).send("Product not found");
+      }
+
+      res.render('cart/addProduct', { product });
+  } catch (err) {
+      console.error(err);
+      res.status(500).send("Error fetching product");
+  }
+});
+
+
+
+
+app.get("/wishlistview", authenticateAccessToken, (req, res) => {
+  const userId = req.user.id;
+  console.log(req.session.wishlist);
+
+  // Filter wishlist items for the logged-in user
+  const userWishlist = (req.session.wishlist || []).filter(item => item.userId === userId);
+
+  res.render("wish/wish", { wishlist: userWishlist });
+});
+
 
 
 // Start server

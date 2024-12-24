@@ -164,6 +164,15 @@
          <form action="/add-to-cart/<%= product._id %>" method="POST">
            <button type="submit">Add to Cart</button>
          </form>
+
+               <!-- Add to Wishlist Button -->
+    
+      <form action="/add-to-wishlist/<%= product._id %>" method="POST" style="display: inline;">
+        <button type="submit">Add to Wishlist</button>
+      </form>
+      
+
+
        </div>
      <% }); %>
    </div>

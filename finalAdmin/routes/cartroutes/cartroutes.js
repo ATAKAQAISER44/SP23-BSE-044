@@ -7,52 +7,10 @@ const Order = require('../../models/Order');
 const { checkAdminAccess, authenticateAccessToken } = require('../../middleware/auth');
 let router = express.Router();
 
-// Add to Cart Route
-// router.post("/add-to-cart/:productId", authenticateAccessToken, async (req, res) => {
-//   const productId = req.params.productId;
-//   const userId = req.user.id; // Get the authenticated user's ID
-
-//   try {
-//     const product = await Product.findById(productId);
-//     if (!product) {
-//       req.flash("error", "Product not found.");
-//       return res.redirect("/products");
-//     }
-
-//     // Initialize the cart if it doesn't exist
-//     if (!req.session.cart) {
-//       req.session.cart = [];
-//     }
-
-//     // Check if the product is already in the cart for this user
-//     const productInCart = req.session.cart.find(item => item.productId.toString() === product._id.toString() && item.userId === userId);
-
-//     if (productInCart) {
-//       productInCart.quantity += 1; // Increment quantity if already in the cart
-//     } else {
-//       req.session.cart.push({
-//         userId: userId, // Store the user ID with the cart item
-//         productId: product._id,
-//         title: product.title,
-//         price: product.price,
-//         quantity: 1,
-//         image: product.image,
-//       });
-//     }
-
-//     // Redirect to cart view with a success message
-//     req.flash("success", `${product.title} added to cart.`);
-//     res.redirect("/cart/cartview");
-//   } catch (error) {
-//     console.error("Error adding product to cart:", error);
-//     req.flash("error", "There was an error adding the product to the cart.");
-//     res.redirect("/products");
-//   }
-// });
 
 router.post("/add-to-cart/:productId", authenticateAccessToken, async (req, res) => {
   const productId = req.params.productId;
-  const userId = req.user.id; // Get the authenticated user's ID
+  const userId = req.user.id; 
 
   try {
     const product = await Product.findById(productId);
@@ -169,40 +127,6 @@ router.get("/checkout/success", (req, res) => {
 });
 
 
-  
-//   // Handle checkout submission
-// router.post("/checkout/submit", async (req, res) => {
-//     if (!req.session.cart || req.session.cart.length === 0) {
-//         return res.redirect("/cart/cartview"); // Redirect to cart if no items
-//     }
-  
-//     const { name, address, email, phone } = req.body;
-  
-//     // You can create an order object here (e.g., saving the order in a database)
-//     // For simplicity, we're just logging it for now
-//     const order = {
-//         customer: { name, address, email, phone },
-//         items: req.session.cart,
-//         total: req.session.cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
-//         status: 'Pending', // You can update the order status as needed
-//     };
-  
-//     console.log("Order Received:", order);
-  
-//     // Clear the cart after checkout
-//     req.session.cart = [];
-  
-//     // You can now process payment (e.g., integrating with a payment gateway)
-//     // For now, we'll just redirect to an order confirmation page
-  
-//     req.flash('success', 'Your order has been placed successfully!');
-//     res.redirect("/checkout/success");
-//   });
-  
-//   // Order success page
-//   router.get("/checkout/success", (req, res) => {
-//     res.render("cart/success", { layout: "layout" });
-//   });
   
 router.post("/checkout/submit", authenticateAccessToken, async (req, res) => {
   if (!req.session.cart || req.session.cart.length === 0) {
