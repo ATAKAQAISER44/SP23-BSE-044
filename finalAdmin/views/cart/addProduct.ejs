@@ -1,0 +1,11 @@
+<div class="product">
+    <img src="<%= product.image ? product.image : '/uploads/products/default.jpg' %>" alt="<%= product.title %>">
+    <h3><%= product.title %></h3>
+    <p><%= product.description %></p>
+    <p>Price: $<%= product.price %></p>
+    
+    <form action="/add-to-cart/<%= product._id %>" method="POST">
+        <button type="submit">Add to Cart</button>
+    </form>
+  </div>
+  
